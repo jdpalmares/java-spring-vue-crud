@@ -6,6 +6,14 @@
       <input type="text" v-model="item.data.title">
     </items> -->
     {{ apiLog }} <br>
+    <div>
+      <header-bar></header-bar>
+      <b-container>
+        <b-row class="mt-5">
+          <router-view />
+        </b-row>
+      </b-container>
+    </div>
     <items ref="myUsers" :items="users" v-slot="{ item }">
       <input placeholder="id" size="1" type="text" v-model="item.data.id">
       <input placeholder="firstname" size="5" type="text" v-model="item.data.firstName">
@@ -24,11 +32,13 @@
 <script>
 import items from '@benixal/vue-items';
 import axios from 'axios';
+import HeaderBar from "./components/HeaderBar.vue";
 import HelloWorld from './components/HelloWorld.vue';
 export default {
   name: 'App',
   components: {
     HelloWorld,
+    HeaderBar,
     items
   },
   mounted() {
@@ -45,8 +55,7 @@ export default {
     },
     savePut(item) {
       axios.put("http://127.0.0.1:8080/users/" + item.data.id,
-        {id:item.data.id,name:item.data.title}
-        )
+        item.data)
         .then((response) => {
           this.apiLog = response.data;
         })

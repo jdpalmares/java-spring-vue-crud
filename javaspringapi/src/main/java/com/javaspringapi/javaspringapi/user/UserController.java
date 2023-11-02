@@ -3,6 +3,7 @@ package com.javaspringapi.javaspringapi.user;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,21 +20,25 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userRepository.findById(id).get();
     }
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userRepository.save(user);
     }
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         User existingUser = getUserById(id);
@@ -44,6 +49,7 @@ public class UserController {
         return userRepository.save(existingUser);
     }
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id) {
         try {
