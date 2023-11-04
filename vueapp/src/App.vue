@@ -8,11 +8,9 @@
     {{ apiLog }} <br>
     <div>
       <header-bar></header-bar>
-      <b-container>
-        <b-row class="mt-5">
-          <router-view />
+        <b-row>
+            <data-table></data-table>
         </b-row>
-      </b-container>
     </div>
     <items ref="myUsers" :items="users" v-slot="{ item }">
       <input placeholder="id" size="1" type="text" v-model="item.data.id">
@@ -32,13 +30,16 @@
 <script>
 import items from '@benixal/vue-items';
 import axios from 'axios';
+import DataTable from "./components/DataTable.vue";
 import HeaderBar from "./components/HeaderBar.vue";
 import HelloWorld from './components/HelloWorld.vue';
+
 export default {
   name: 'App',
   components: {
     HelloWorld,
     HeaderBar,
+    DataTable,
     items
   },
   mounted() {

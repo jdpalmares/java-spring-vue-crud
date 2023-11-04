@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@benixal/vue-items": "^0.1.1",
+    "@dvuckovic/vue3-bootstrap-icons": "^1.0.6",
     "axios": "^1.6.0",
     "bootstrap": "^5.3.2",
     "bootstrap-vue": "^2.23.1",
