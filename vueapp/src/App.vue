@@ -1,10 +1,6 @@
 <template>
   <div>
     <img alt="Vue logo" src="./assets/logo.png">
-    <!-- <items :items="products" v-slot="{ item }"> intro code
-      <input size="l" type="text" v-model="item.data.id">
-      <input type="text" v-model="item.data.title">
-    </items> -->
     {{ apiLog }} <br>
     <div>
       <header-bar></header-bar>
@@ -12,6 +8,7 @@
             <data-table></data-table>
         </b-row>
     </div>
+    <!-- intro code TODO delete on further release
     <items ref="myUsers" :items="users" v-slot="{ item }">
       <input placeholder="id" size="1" type="text" v-model="item.data.id">
       <input placeholder="firstname" size="5" type="text" v-model="item.data.firstName">
@@ -23,24 +20,24 @@
       <button @click="del(item)">delete</button>
     </items>
     <button @click="$refs.myUsers.addNew({})">+Add New</button>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
 </template>
 
 <script>
-import items from '@benixal/vue-items';
+// intro imports no longer used
+// import items from '@benixal/vue-items';
+// import HelloWorld from './components/HelloWorld.vue';
 import axios from 'axios';
 import DataTable from "./components/DataTable.vue";
 import HeaderBar from "./components/HeaderBar.vue";
-import HelloWorld from './components/HelloWorld.vue';
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
     HeaderBar,
     DataTable,
-    items
   },
   mounted() {
     axios.get("http://127.0.0.1:8080/users")

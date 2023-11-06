@@ -2,7 +2,7 @@
     <b-form class="mt-3">
         <b-row>
             <b-row>
-                <h4 class="text-secondary">Contact Details</h4>
+                <h4 class="text-secondary">User Details</h4>
             </b-row>
             <b-col cols="6">
                 <b-form-group id="first-name" label="First Name" label-for="first-name">

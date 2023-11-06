@@ -2,61 +2,56 @@
     <b-form class="mt-3">
         <b-row>
             <b-row>
-            <h4 class="text-secondary">Contact Details</h4>
+            <h4 class="text-secondary">User {{ userData.firstName }} {{ userData.lastName }} Details</h4>
             </b-row>
             <b-col cols="6">
             <b-form-group id="first-name" label="First Name" label-for="first-name">
                 <b-form-input
-                id="first-name"
-                type="text"
-                placeholder="First Name"
-                v-model="customer.contact_firstname"
+                    id="first-name"
+                    type="text"
+                    placeholder="First Name"
+                    :model-value="userData.firstName"
+                    @update:model-value="newValue => user.firstName = newValue"
                 ></b-form-input>
             </b-form-group>
             </b-col>
             <b-col cols="6">
             <b-form-group id="last-name" label="Last Name" label-for="last-name">
                 <b-form-input
-                id="last-name"
-                type="text"
-                placeholder="Last Name"
-                v-model="customer.contact_lastname"
+                    id="last-name"
+                    type="text"
+                    placeholder="Last Name"
+                    :model-value="userData.lastName"
+                    @update:model-value="newValue => user.lastName = newValue"
                 ></b-form-input>
             </b-form-group>
             </b-col>
         </b-row>
         <b-row class="mt-3">
             <b-col cols="6">
-            <b-form-group id="email" label="E-Mail" label-for="email">
-                <b-form-input
-                id="email"
-                type="email"
-                placeholder="example@crm.com"
-                v-model="customer.contact_email"
-                ></b-form-input>
-            </b-form-group>
+                <b-form-group id="email" label="E-Mail" label-for="email">
+                    <b-form-input
+                    id="email"
+                    type="email"
+                    placeholder="example@crm.com"
+                    :model-value="userData.email"
+                    @update:model-value="newValue => user.email = newValue"
+                    ></b-form-input>
+                </b-form-group>
+            </b-col>
+            <b-col cols="6">
+                <b-form-group id="phone-number" label="Phone Number" label-for="phone-number">
+                    <b-form-input
+                    id="phone-number"
+                    type="tel"
+                    placeholder="+1234567890"
+                    :model-value="userData.phoneNumber"
+                    @update:model-value="newValue => user.phoneNumber = newValue"
+                    ></b-form-input>
+                </b-form-group>
             </b-col>
         </b-row>
-        <b-row class="mt-5">
-            <h4 class="text-secondary">Company Details</h4>
-        </b-row>
-        <b-row>
-            <b-col cols="4">
-            <b-form-group
-                id="company_name"
-                label="Company Name"
-                label-for="company_name"
-            >
-                <b-form-input
-                id="company_name"
-                type="text"
-                placeholder="XYZ Industries"
-                v-model="customer.company_name"
-                ></b-form-input>
-            </b-form-group>
-            </b-col>
-        </b-row>
-        <b-row>
+        <!-- <b-row> commented out for now but may be needed for date picker
             <b-col cols="4">
             <b-form-group
                 id="acquired_on"
@@ -70,22 +65,15 @@
                 ></b-form-input>
             </b-form-group>
             </b-col>
-        </b-row>
-        <b-row class="mt-2">
-            <b-form-checkbox
-            id="customer_status"
-            v-model="customer.customer_status"
-            name="customer-status"
-            value="active"
-            unchecked-value="inactive"
-            >
-            Customer is active
-            </b-form-checkbox>
-        </b-row>
+        </b-row> -->
         <b-row class="mt-4">
             <b-col cols="3">
-            <b-button variant="primary" class="px-5" @click="updateCustomer"
-                >Update Customer</b-button
+            <b-button
+                variant="primary"
+                class="px-5"
+                @click="updateCustomer"
+                :disabled="Object.keys(user).length === 0"
+                >Edit User</b-button
             >
             </b-col>
             <b-col>
@@ -99,48 +87,57 @@
     import axios from "axios";
     
     export default {
-        name: "CreateCustomerModal",
+        name: "EditCustomerModal",
         props: {
-        customerId: Number,
+            userId: Number,
+            editModalShow: Boolean,
+            userData: Object,
         },
         data() {
-        return {
-            customer: {},
-        };
+            return {
+                user: {},
+            };
         },
         mounted() {
-        this.getCusomterByID();
         },
         methods: {
-        triggerClose() {
-            this.$emit("closeEditModal");
-        },
-        getCusomterByID() {
-            axios
-            .get(`http://127.0.0.1:8080/users/${this.customerId}`)
-            .then((response) => {
-                this.customer = response.data;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
-        updateCustomer() {
-            axios
-            .put(
-                `http://127.0.0.1:8080/users/${this.customerId}`,
-                this.customer
-            )
-            .then((response) => {
-                console.log(response.data);
+            changeUserDataFirstName(value) {
+                this.user.firstName = value;
+            },
+            triggerClose() {
                 this.$emit("closeEditModal");
-                this.$emit("reloadDataTable");
-                this.$emit("showSuccessAlert");
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
+            },
+            getUserByID() {
+                axios
+                .get(`http://127.0.0.1:8080/users/${this.userId}`)
+                .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                    this.user = response.data;
+                    this.user = this.userData;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            },
+            updateCustomer() {
+                let tempObj = this.user;
+                this.user = this.userData;
+                Object.assign(this.user, tempObj);
+                axios
+                .put(
+                    `http://127.0.0.1:8080/users/${this.userId}`,
+                    this.user
+                )
+                .then((response) => {
+                    console.log(response.data);
+                    this.$emit("closeEditModal");
+                    this.$emit("reloadDataTable");
+                    this.$emit("showSuccessAlert");
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            },
         },
     };
 </script>

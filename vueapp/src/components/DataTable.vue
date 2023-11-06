@@ -77,7 +77,7 @@
                             <b-button
                                 variant="primary"
                                 id="show-btn"
-                                @click="showDeleteModal(data.item.id)"
+                                @click="showEditModal(data.item.id)"
                             >
                                 <span class="h6 text-white">Edit</span>
                             </b-button>
@@ -112,18 +112,21 @@
             ></create-customer-modal>
         </b-modal>
     
-        <!-- Modal for updating customers -->
+        <!-- Modal for updating customers ref="edit-customer-modal" -->
         <b-modal
-            ref="edit-customer-modal"
+            v-model="editModalShow"
             size="xl"
             hide-footer
-            title="Edit Customer"
+            title="Edit User"
+            @shown="getUserByID(userId)"
         >
             <edit-customer-form
+            :userData="userData"
                 @closeEditModal="closeEditModal"
                 @reloadDataTable="getUserData"
                 @showSuccessAlert="showAlertUpdate"
-                :customerId="customerId"
+                :userId="userId"
+                :editModalShow="editModalShow"
             ></edit-customer-form>
         </b-modal>
     
@@ -138,7 +141,8 @@
                 @closeDeleteModal="closeDeleteModal"
                 @reloadDataTable="getUserData"
                 @showDeleteAlert="showDeleteSuccessModal"
-                :customerId="customerId"
+                :userId="getUserID"
+                :editModalShow="editModalShow"
             ></delete-customer-modal>
         </b-modal>
         </div>
@@ -187,80 +191,104 @@ import axios from "axios";
             numberOfCustomers: 0,
             activeCustomers: 0,
             activeCustomersData: [],
-            customerId: 1,
+            userId: 4,
             companySearchTerm: "",
             tableHeader: "",
             showSuccessAlert: false,
             alertMessage: "",
             createModalShow: false,
+            editModalShow: false,
+            userData: {},
         };
         },
         mounted() {
-        this.getUserData();
-        },
-        methods: {
-        showCreateModal() {
-            this.createModalShow = true;
-        },
-        closeCreateModal() {
-            this.createModalShow = false;
-        },
-        getUserData() {
-            axios
-            .get("http://127.0.0.1:8080/users")
-            .then((response) => {
-                this.tableHeader = "All Users";
-                this.items = response.data;
-                this.numberOfCustomers = response.data.length;
-                this.activeCustomersData = response.data.filter(
-                (item) => item.email !== null
-                );
-                this.activeCustomers = this.activeCustomersData.length;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
-        getRowData(id) {
-            this.$refs["edit-customer-modal"].show();
-            this.customerId = id;
-        },
-        closeEditModal() {
-            this.$refs["edit-customer-modal"].hide();
-        },
-        setFilterTotalIsActive() {
-            this.tableHeader = "Total Users";
             this.getUserData();
         },
-        setFilterActiveIsActive() {
-            this.tableHeader = "Active Users";
-            this.items = this.activeCustomersData;
-        },
-        showAlertCreate() {
-            this.showSuccessAlert = true;
-            this.alertMessage = "User was created successfully!";
-        },
-        showAlertUpdate() {
-            this.showSuccessAlert = true;
-            this.alertMessage = "User was updated successfully";
-        },
-        showDeleteModal(id) {
-            this.$refs["delete-customer-modal"].show();
-            this.customerId = id;
-        },
-        closeDeleteModal() {
-            this.$refs["delete-customer-modal"].hide();
-        },
-        showDeleteSuccessModal() {
-            this.showSuccessAlert = true;
-            this.alertMessage = "User was deleted successfully!";
-        },
+        methods: {
+            showCreateModal() {
+                this.createModalShow = true;
+            },
+            closeCreateModal() {
+                this.createModalShow = false;
+            },
+            getUserData() {
+                axios
+                .get("http://127.0.0.1:8080/users")
+                .then((response) => {
+                    this.tableHeader = "All Users";
+                    this.items = response.data;
+                    this.numberOfCustomers = response.data.length;
+                    this.activeCustomersData = response.data.filter(
+                    (item) => item.email !== null
+                    );
+                    this.activeCustomers = this.activeCustomersData.length;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            },
+            getUserByID() {
+                axios
+                .get(`http://127.0.0.1:8080/users/${this.userId}`)
+                .then((response) => {
+                    // console.log(JSON.stringify(response));
+                    this.userData = response.data;
+                    // console.log("userData= "+JSON.stringify(this.userData));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            },
+            getUserID() {
+                return this.userId;
+            },
+            getEditModalShow() {
+                return this.editModalShow;
+            },
+            getUserDataObj() {
+                return this.userData;
+            },
+            showEditModal(id) {
+                this.userId = id;
+                this.getUserByID();
+                this.editModalShow = true;
+            },
+            closeEditModal() {
+                this.editModalShow = false;
+            },
+            setFilterTotalIsActive() {
+                this.tableHeader = "Total Users";
+                this.getUserData();
+            },
+            setFilterActiveIsActive() {
+                this.tableHeader = "Active Users";
+                this.items = this.activeCustomersData;
+            },
+            showAlertCreate() {
+                this.showSuccessAlert = true;
+                this.alertMessage = "User was created successfully!";
+            },
+            showAlertUpdate() {
+                this.showSuccessAlert = true;
+                this.alertMessage = "User was updated successfully";
+            },
+            showDeleteModal(id) {
+                this.$refs["delete-customer-modal"].show();
+                this.userId = id;
+            },
+            closeDeleteModal() {
+                this.$refs["delete-customer-modal"].hide();
+            },
+            showDeleteSuccessModal() {
+                this.showSuccessAlert = true;
+                this.alertMessage = "User was deleted successfully!";
+            },
         },
     };
 </script>
 
 <style>
     .action-item:hover {
-    cursor: pointer;
+        cursor: pointer;
     }
 </style>
