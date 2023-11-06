@@ -6,11 +6,12 @@
             </b-alert>
         </b-row>
         <b-row>
+            <!-- old code for active users -->
+            <!-- :activeCustomers="activeCustomers"  -->
+            <!-- @activeCustomerIsActive="setFilterActiveIsActive" -->
             <customer-overview
                 :totalCustomers="numberOfCustomers"
-                :activeCustomers="activeCustomers"
                 @totalCustomersIsActive="setFilterTotalIsActive"
-                @activeCustomerIsActive="setFilterActiveIsActive"
             ></customer-overview>
         </b-row>
         <b-row class="mt-3">
@@ -118,21 +119,19 @@
             size="xl"
             hide-footer
             title="Edit User"
-            @shown="getUserByID(userId)"
         >
             <edit-customer-form
-            :userData="userData"
                 @closeEditModal="closeEditModal"
                 @reloadDataTable="getUserData"
                 @showSuccessAlert="showAlertUpdate"
                 :userId="userId"
-                :editModalShow="editModalShow"
+                :userData="userData"
             ></edit-customer-form>
         </b-modal>
     
         <!-- Delete Customer Modal -->
         <b-modal
-            ref="delete-customer-modal"
+            v-model="deleteModalShow"
             size="md"
             hide-footer
             title="Confirm Deletion"
@@ -141,8 +140,8 @@
                 @closeDeleteModal="closeDeleteModal"
                 @reloadDataTable="getUserData"
                 @showDeleteAlert="showDeleteSuccessModal"
-                :userId="getUserID"
-                :editModalShow="editModalShow"
+                :userId="userId"
+                :userData="userData"
             ></delete-customer-modal>
         </b-modal>
         </div>
@@ -198,6 +197,7 @@ import axios from "axios";
             alertMessage: "",
             createModalShow: false,
             editModalShow: false,
+            deleteModalShow: false,
             userData: {},
         };
         },
@@ -218,35 +218,15 @@ import axios from "axios";
                     this.tableHeader = "All Users";
                     this.items = response.data;
                     this.numberOfCustomers = response.data.length;
-                    this.activeCustomersData = response.data.filter(
-                    (item) => item.email !== null
-                    );
-                    this.activeCustomers = this.activeCustomersData.length;
+                    // old code for active users
+                    // this.activeCustomersData = response.data.filter(
+                    // (item) => item.email !== null
+                    // );
+                    // this.activeCustomers = this.activeCustomersData.length;
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-            },
-            getUserByID() {
-                axios
-                .get(`http://127.0.0.1:8080/users/${this.userId}`)
-                .then((response) => {
-                    // console.log(JSON.stringify(response));
-                    this.userData = response.data;
-                    // console.log("userData= "+JSON.stringify(this.userData));
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            },
-            getUserID() {
-                return this.userId;
-            },
-            getEditModalShow() {
-                return this.editModalShow;
-            },
-            getUserDataObj() {
-                return this.userData;
             },
             showEditModal(id) {
                 this.userId = id;
@@ -256,14 +236,23 @@ import axios from "axios";
             closeEditModal() {
                 this.editModalShow = false;
             },
+            showDeleteModal(id) {
+                this.userId = id;
+                this.getUserByID();
+                this.deleteModalShow = true;
+            },
+            closeDeleteModal() {
+                this.deleteModalShow = false;
+            },
             setFilterTotalIsActive() {
                 this.tableHeader = "Total Users";
                 this.getUserData();
             },
-            setFilterActiveIsActive() {
-                this.tableHeader = "Active Users";
-                this.items = this.activeCustomersData;
-            },
+            // old code for active users
+            // setFilterActiveIsActive() {
+            //     this.tableHeader = "Active Users";
+            //     this.items = this.activeCustomersData;
+            // },
             showAlertCreate() {
                 this.showSuccessAlert = true;
                 this.alertMessage = "User was created successfully!";
@@ -272,16 +261,19 @@ import axios from "axios";
                 this.showSuccessAlert = true;
                 this.alertMessage = "User was updated successfully";
             },
-            showDeleteModal(id) {
-                this.$refs["delete-customer-modal"].show();
-                this.userId = id;
-            },
-            closeDeleteModal() {
-                this.$refs["delete-customer-modal"].hide();
-            },
             showDeleteSuccessModal() {
                 this.showSuccessAlert = true;
                 this.alertMessage = "User was deleted successfully!";
+            },
+            getUserByID() {
+                axios
+                .get(`http://127.0.0.1:8080/users/${this.userId}`)
+                .then((response) => {
+                    this.userData = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
             },
         },
     };

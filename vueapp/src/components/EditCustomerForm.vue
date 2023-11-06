@@ -90,7 +90,6 @@
         name: "EditCustomerModal",
         props: {
             userId: Number,
-            editModalShow: Boolean,
             userData: Object,
         },
         data() {
@@ -129,6 +128,7 @@
                     this.user
                 )
                 .then((response) => {
+                    this.user = {};
                     console.log(response.data);
                     this.$emit("closeEditModal");
                     this.$emit("reloadDataTable");

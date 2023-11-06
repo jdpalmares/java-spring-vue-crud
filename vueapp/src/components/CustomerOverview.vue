@@ -16,7 +16,7 @@
                 </h4>
             </div>
             </b-col>
-            <b-col>
+            <!-- <b-col>
             <div
                 class="filter-card p-3"
                 :class="{
@@ -30,7 +30,7 @@
                 <strong>{{ activeCustomers }}</strong>
                 </h4>
             </div>
-            </b-col>
+            </b-col> -->
         </b-row>
         </div>
     </template>
@@ -39,13 +39,13 @@
     export default {
         name: "CustomerOverview",
         props: {
-        totalCustomers: Number,
-        activeCustomers: Number,
+            totalCustomers: Number,
+            // activeCustomers: Number,
         },
         data() {
         return {
             totalIsActive: true,
-            activeIsActive: false,
+            // activeIsActive: false,
         };
         },
         methods: {
@@ -54,11 +54,11 @@
             this.activeIsActive = false;
             this.$emit("totalCustomersIsActive");
         },
-        activeCustomersIsActiveFilter() {
-            this.totalIsActive = false;
-            this.activeIsActive = true;
-            this.$emit("activeCustomerIsActive");
-        },
+        // activeCustomersIsActiveFilter() {
+        //     this.totalIsActive = false;
+        //     this.activeIsActive = true;
+        //     this.$emit("activeCustomerIsActive");
+        // },
         },
     };
 </script>
